@@ -1,0 +1,404 @@
+【1.用户登录】
+输入：JSONObject jsonIn
+{
+	"service":"MemberLog",
+	"email":String(format&lenth<=45),
+	"password":String(lenth<=20)
+}
+
+输出：JSONObject
+{
+	"logStat":int,(如果参数为-1则没有后项)
+	"familyName":String,
+	"name":String
+}
+(-1)失败
+(0)成功，普通权限用户
+(1)成功，管理员权限用户
+
+
+
+【2.超级用户注册】
+输入：JSONObject jsonIn
+{
+	"service":"AdminSin",
+	"name":String(lenth<=20),
+	"email":String(format&lenth<=45),
+	"password":String(lenth<=20),
+	"familyName":String(lenth<=20),
+	"familyKey":String(lenth<=20),
+	"ipAddress":""
+}
+
+输出：JSONObject
+{
+	"AdminSinStat":int
+}
+(0)失败，email或者familyName重复
+(1)成功
+
+
+
+【3.普通用户注册】
+输入：JSONObject jsonIn
+{
+	"service":"MemberSin",
+	"name":String(lenth<=20),
+	"email":String(format&lenth<=45),
+	"password":String(lenth<=20),
+	"familyName":String(lenth<=20),
+	"familyKey":String(lenth<=20)
+}
+
+输出：JSONObject
+{
+	"MemberSinStat":int
+}
+(-1)失败，家庭名或者密钥输入错误
+(0)失败，email重复
+(1)成功
+
+
+
+【4.获取文件信息】
+输入：JSONObject jsonIn
+{
+	"service":"GetFileInfo",
+	"familyName":String
+}
+
+输出：JSONObject
+{
+	"music":JSONArray,
+	"video":JSONArray,
+	"photo":JSONArray,
+	"file":JSONArray
+}
+JSONArray
+[
+	{"email":String,
+	 "fileName":String,
+	 "size":long,
+	 "name":String},
+	{<same>},
+	...,
+	{<same>}
+]
+
+
+
+【5.获取FTP服务器信息】
+输入：JSONObject jsonIn
+{
+	"service":"GetFtp",
+	"email":String(format&lenth<=45),
+	"type":String(enum),
+	"familyName":String
+}
+
+输出：JSONObject
+{
+	"stat":int,(0：失败，用户不存在；1：成功；该参数是0时没有接下来的内容，注意防止出错)
+	"ip":String,(FTP服务器地址，采用默认端口)
+	"user":String,（登录用户）
+	"password":String,（登录密码）
+	"fold":String（上传/下载文件所在目录，不包括文件本身）
+}
+
+
+
+【6.获取http网络流】
+输入：JSONObject jsonIn
+{
+	"service":"GetHttp",
+	"familyName":String,
+	"type":String("music""video""photo""file"),
+	"email":String(format)
+	"fileName":Stirng(带后缀名)
+}
+
+输出：JSONObject
+{
+	"url":String
+}
+
+
+
+【7.删除文件】
+输入：JSONObject jsonIn
+{
+	"service":"DeleteFile",
+	"familyName":String,
+	"type":String(enum),
+	"email":String(format&lenth<=45),
+	"fileName":JSONArray(lenth<=45)[String,String,...,String]
+}
+
+输出：JSONObject
+{
+	"DeleteFileStat":int
+}
+(0)失败，文件不存在
+(1)成功
+
+
+
+【8.获取云平台状态】
+输入：JSONObject jsonIn
+{
+	"service":"GetServerInfo",
+	"familyName":String
+}
+
+输出：JSONObject
+{
+	"CPU":String //CPU使用率，例：10 %
+	"availableMemory":String //可用内存，例：1024 MB
+	"committedMemory":String //已用内存，例：1024 MB
+	"space":long //总大小(占用空间+可用空间，单位是B)，例：1073741824
+	"musicSize":long //音乐占用空间（单位是B），例：1048576
+	"videoSize":long //视频占用空间
+	"photoSize":long //照片占用空间
+	"fileSize":long //其他占用空间
+}
+
+
+
+【9.修改权限】
+输入：JSONObject jsonIn
+{
+	"service":"ChangePermission",
+	"email":String,
+	"permission":boolean
+}
+
+输出：JSONObject
+{
+	"ChangePermissionStat":int(1成功，0失败)
+}
+
+
+
+【10.获取家庭用户】
+输入：JSONObject jsonIn
+{
+	"service":"GetFamilyMembers",
+	"familyName":String
+}
+
+输出：JSONObject
+{
+	"adminEmail":String,
+	"familyList":JSONArray
+[
+	{"email":String,
+	 "name":String,
+	 "permission":boolean},
+	{<same>},
+	...,
+	{<same>}
+]
+}
+
+
+
+【11.删除用户】
+输入：JSONObject jsonIn
+{
+	"service":"DeleteMember",
+	"email":String
+}
+
+输出：JSONObject
+{
+	"DeleteMemberStat":int(1成功，0失败)
+}
+
+
+
+【12.系统日志】
+输入：JSONObject jsonIn
+{
+	"service":"Log",
+	"familyName":String
+}
+
+输出：JSONArray
+[
+	{"date":String,
+	 "ipAddress":String,
+	 "email":String,
+	 "operation":String,
+	 "result":String},
+	{<same>},
+	...,
+	{<same>}
+]
+
+
+
+=====智能家具部分=====
+
+
+
+【属性表】
+"type":			<option value="Aircondition">空调</option>
+			<option value="Curtain">窗帘</option>
+			<option value="Icebox">冰箱</option>
+			<option value="Light">电灯</option>
+			<option value="Sensor">传感器</option>
+			<option value="Television">电视</option>
+
+"floor"	:		<option value="0">地下一层</option>
+			<option value="1">一层</option>
+			<option value="2">二层</option>
+			<option value="3">三层</option>
+
+"room"			<option selected="selected">请选择</option>
+			<option value="living">客厅</option>
+			<option value="master">主卧</option>
+			<option value="guest">客卧</option>
+			<option value="rest">卫生间</option>
+			<option value="kitchen">厨房</option>
+			<option value="dinding">餐厅</option>
+			<option value="balcony">阳台</option>
+
+
+
+【状态表】
+"Aircondition":
+		jsonObject.put("temperature", temperature);
+		jsonObject.put("switch", state);
+		jsonObject.put("wind", wind);
+		jsonObject.put("windrate", windrate);
+		jsonObject.put("model", model);
+		jsonObject.put("set_time", set_time);
+
+"Curtain":
+		jsonObject.put("switch", state);
+
+"Icebox":
+		jsonObject.put("temperature", temperature);
+		jsonObject.put("switch", state);
+		jsonObject.put("model", model);
+		jsonObject.put("set_time", set_time);
+
+"Light":
+		jsonObject.put("brightness", brightness);
+		jsonObject.put("switch", state);
+
+"Sensor":
+		jsonObject.put("alarm", alarm);
+		jsonObject.put("set_threshold", set_threshold);
+		jsonObject.put("switch", state);
+
+"Television":
+		jsonObject.put("channel", channel);
+		jsonObject.put("switch", state);
+		jsonObject.put("model", model);
+		jsonObject.put("voice", voice);
+
+
+
+【1.获取已连接上的家具】
+输入：JSONObject jsonIn
+{
+	"service":"GetRunFur",
+	"familyName":String
+}
+
+输出：JSONArray
+[
+	{"floor":String,
+	 "room":String,
+	 "type":String},
+	{<same>},
+	...,
+	{<same>}
+]
+
+
+
+【2.获取已注册的家具】
+输入：JSONObject jsonIn
+{
+	"service":"GetSinFur",
+	"familyName":String
+}
+
+输出：JSONArray
+[
+	{"floor":String,
+	 "room":String,
+	 "type":String},
+	{<same>},
+	...,
+	{<same>}
+]
+
+
+
+【3.注册家具】
+输入：JSONObject jsonIn
+{
+	"service":"AddFurniture",
+	"familyName":String,
+	"floor":String,
+	"room":String,
+	"type":String
+}
+
+输出：JSONObject
+{
+	"AddFurnitureStat":int(0失败，1成功)
+}
+
+
+
+【4.获取家具状态】
+输入：JSONObject jsonIn
+{
+	"service":"GetFurInfo",
+	"familyName":String,
+	"floor":String,
+	"room":String,
+	"type":String
+}
+
+输出：JSONObject
+【见状态表】
+
+
+
+【5.设置家具状态】
+输入：JSONObject jsonIn
+{
+	"service":"SetFurInfo",
+	"familyName":String,
+	"floor":String,
+	"room":String,
+	"type":String
+	【见状态表】
+}
+
+输出：JSONObject
+{
+	"SetFurInfoStat":int(0失败，1成功)
+}
+
+
+
+【6.删除家具】
+输入：JSONObject jsonIn
+{
+	"service":"DeleteFurniture",
+	"familyName":String,
+	"floor":String,
+	"room":String,
+	"type":String
+}
+
+输出：JSONObject
+{
+	"DeleteFurnitureStat":int(0失败，1成功)
+}
